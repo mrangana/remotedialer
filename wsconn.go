@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
+	"github.com/sirupsen/logrus"
 )
 
 type wsWrapper struct {
@@ -44,6 +45,18 @@ func (w *wsWrapper) WriteControl(messageType int, deadline time.Time, data []byt
 }
 
 func (w *wsWrapper) WriteMessage(messageType int, deadline time.Time, data []byte) error {
+
+	mapping := map[int]string{
+		1: "Data",
+		2: "Connect",
+		3: "Error",
+		4: "AddClient",
+		5: "RemoveClient",
+		6: "Pause",
+		7: "Resume",
+		8: "SyncConnections",
+	}
+	logrus.Printf("Message type = %s of size = %d \n", mapping[messageType], len(data))
 	if deadline.IsZero() {
 		w.Lock()
 		defer w.Unlock()
